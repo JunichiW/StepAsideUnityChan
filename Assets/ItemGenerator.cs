@@ -18,43 +18,37 @@ public class ItemGenerator : MonoBehaviour
     private float posRange = 3.4f;
     //Unityちゃんのオブジェクト
     private GameObject unitychan;
-    //最後にアイテムを生成したUnityちゃんの位置
-    private float lastGeneratedItemPos = 0;
     //Unityちゃんの進行に応じてアイテムを出すZ方向の範囲
-    private int itemPos = 50;
+    private int itemOffsetZ = 50;
     //Z方向にアイテムを出す間隔
     private int itemInterval = 15;
-    //アイテムの生成をやめる判定
-    private bool isEndCreateItem = false;
+    //Unityちゃんの進行に応じてアイテムを生成する地点
+    private float nextGenerateItemPos = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
         //Unityちゃんのオブジェクトを取得
         this.unitychan = GameObject.Find("unitychan");
-        //ゲーム開始時にアイテムを生成
-        for (int k = startPos; startPos + itemPos > k; k += itemInterval)
-        {
-            Createitem(k);
-        }
+        //最初にアイテムを生成する地点を代入
+        nextGenerateItemPos = startPos;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         //goalPosでアイテムの生成をやめる
-        if (lastGeneratedItemPos + itemInterval > goalPos)
-        {
-            this.isEndCreateItem = true;
-        }
-        if (this.isEndCreateItem)
+        if (nextGenerateItemPos > goalPos)
         {
             return;
         }
+
         //Unityちゃんの進行に応じてアイテムを生成
-        if (lastGeneratedItemPos - itemPos <= unitychan.transform.position.z)
+        if (unitychan.transform.position.z + itemOffsetZ > nextGenerateItemPos)
         {
-            Createitem(lastGeneratedItemPos + itemInterval);
+            Createitem(unitychan.transform.position.z + itemOffsetZ);
+            nextGenerateItemPos = unitychan.transform.position.z + itemOffsetZ + itemInterval;
         }
     }
 
@@ -98,6 +92,6 @@ public class ItemGenerator : MonoBehaviour
                 }
             }
         }
-                lastGeneratedItemPos = z;
+
     }
 }
